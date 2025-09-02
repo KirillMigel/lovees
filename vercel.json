@@ -1,0 +1,52 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "functions": {
+    "src/pages/api/socket.ts": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NEXTAUTH_URL": "@nextauth_url",
+    "NEXTAUTH_SECRET": "@nextauth_secret",
+    "DATABASE_URL": "@database_url",
+    "S3_ENDPOINT": "@s3_endpoint",
+    "S3_ACCESS_KEY": "@s3_access_key",
+    "S3_SECRET_KEY": "@s3_secret_key",
+    "S3_BUCKET": "@s3_bucket",
+    "S3_PUBLIC_URL": "@s3_public_url",
+    "GOOGLE_CLIENT_ID": "@google_client_id",
+    "GOOGLE_CLIENT_SECRET": "@google_client_secret",
+    "SENTRY_DSN": "@sentry_dsn",
+    "SENTRY_AUTH_TOKEN": "@sentry_auth_token",
+    "SENTRY_ORG": "@sentry_org",
+    "SENTRY_PROJECT": "@sentry_project"
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/socket.io/(.*)",
+      "destination": "/api/socket"
+    }
+  ]
+}

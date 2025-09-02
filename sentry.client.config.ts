@@ -1,0 +1,20 @@
+import * as Sentry from "@sentry/nextjs"
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  tracesSampleRate: 1.0,
+  debug: false,
+  integrations: [
+    new Sentry.BrowserTracing({
+      tracePropagationTargets: ["localhost", /^https:\/\/.*\.vercel\.app/],
+    }),
+  ],
+  beforeSend(event) {
+    // Filter out non-error events in production
+    if (process.env.NODE_ENV === "production" && event.level !== "error") {
+      return null
+    }
+    return event
+  },
+})
