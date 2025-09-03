@@ -1,6 +1,6 @@
 import { withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
-import { getSiteOrigin } from "@/lib/env"
+// import { getSiteOrigin } from "@/lib/env" // Temporarily disabled
 
 export default withAuth(
   function middleware(req) {
@@ -19,27 +19,27 @@ export default withAuth(
 
     // If not authenticated and trying to access protected route
     if (!isAuth && !isPublicRoute) {
-      return NextResponse.redirect(new URL("/login", getSiteOrigin()))
+      return NextResponse.redirect(new URL("/login", req.url))
     }
 
     // Check admin access
     if (isAuth && (isAdminRoute || isApiAdminRoute) && userRole !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", getSiteOrigin()))
+      return NextResponse.redirect(new URL("/", req.url))
     }
 
     // If authenticated but not onboarded and not on onboarding page
     if (isAuth && !isOnboarded && req.nextUrl.pathname !== "/onboarding") {
-      return NextResponse.redirect(new URL("/onboarding", getSiteOrigin()))
+      return NextResponse.redirect(new URL("/onboarding", req.url))
     }
 
     // If authenticated and onboarded but on auth pages, redirect to home
     if (isAuth && isOnboarded && (req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/register")) {
-      return NextResponse.redirect(new URL("/", getSiteOrigin()))
+      return NextResponse.redirect(new URL("/", req.url))
     }
 
     // If authenticated and onboarded but on onboarding page, redirect to home
     if (isAuth && isOnboarded && req.nextUrl.pathname === "/onboarding") {
-      return NextResponse.redirect(new URL("/", getSiteOrigin()))
+      return NextResponse.redirect(new URL("/", req.url))
     }
 
     return NextResponse.next()
