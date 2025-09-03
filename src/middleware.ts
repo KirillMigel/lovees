@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request: Request) {
-  // Simple middleware - just pass through for now
+  // Simple middleware - just pass through for now (updated)
   return NextResponse.next();
 }
 
