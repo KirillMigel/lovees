@@ -1,17 +1,14 @@
 import { z } from "zod"
 
 export const registerSchema = z.object({
+  name: z.string().min(2, "Имя должно содержать минимум 2 символа"),
   email: z.string().email("Некорректный email"),
   password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Пароли не совпадают",
-  path: ["confirmPassword"],
 })
 
 export const loginSchema = z.object({
   email: z.string().email("Некорректный email"),
-  password: z.string().min(1, "Введите пароль"),
+  password: z.string().min(1, "Пароль обязателен"),
 })
 
 export const onboardingSchema = z.object({
@@ -28,12 +25,16 @@ export const onboardingSchema = z.object({
     return age >= 18
   }, "Вам должно быть минимум 18 лет"),
   gender: z.enum(["MALE", "FEMALE", "OTHER"]),
+  city: z.string().min(2, "Город обязателен"),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
   interests: z.array(z.string()).min(1, "Выберите минимум один интерес"),
-  city: z.string().min(2, "Введите город"),
-  lat: z.number().min(-90).max(90),
-  lng: z.number().min(-180).max(180),
 })
 
-export type RegisterInput = z.infer<typeof registerSchema>
-export type LoginInput = z.infer<typeof loginSchema>
-export type OnboardingInput = z.infer<typeof onboardingSchema>
+export const profileUpdateSchema = z.object({
+  bio: z.string().max(500, "Био не должно превышать 500 символов").optional(),
+  city: z.string().min(2, "Город обязателен").optional(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  interests: z.array(z.string()).optional(),
+})

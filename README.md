@@ -1,150 +1,214 @@
 # Lovees App
 
-A modern dating app built with Next.js 15, featuring real-time chat, photo uploads, and advanced matching algorithms.
+Современное приложение знакомств на Next.js с аутентификацией, чатом и реалтайм функциями.
 
-## ✨ Features
+## 🚀 Быстрый старт
 
-- ⚡ **Next.js 15** with App Router and TypeScript
-- 🎨 **Tailwind CSS v4** with shadcn/ui components
-- 🗄️ **PostgreSQL** with Prisma ORM
-- 🔐 **NextAuth** with Google OAuth and credentials
-- 💬 **Real-time chat** with Socket.IO
-- 📁 **S3 file uploads** with Cloudflare R2
-- 🎯 **Smart matching** with location and interests
-- 🛡️ **User safety** with reports and blocking
-- 📊 **Analytics** with PostHog (optional)
-- 🐛 **Error tracking** with Sentry (optional)
-- 🧪 **Testing** with Vitest and Playwright
-- 🚀 **Production ready** with Vercel deployment
+### 1. Установка зависимостей
 
-## 🚀 Quick Start
-
-### Local Development
-
-1. **Clone and setup:**
-   ```bash
-   git clone <repository-url>
-   cd lovees-app
-   npm install
-   npm run setup:env
-   ```
-
-2. **Configure services:**
-   - Set up [Neon Database](https://neon.tech)
-   - Configure [Cloudflare R2](https://dash.cloudflare.com)
-   - Set up [Google OAuth](https://console.cloud.google.com)
-
-3. **Run migrations:**
-   ```bash
-   npm run prisma:migrate
-   ```
-
-4. **Start development:**
-   ```bash
-   npm run dev
-   ```
-
-### Production Deployment
-
-1. **Deploy to Vercel:**
-   - Connect your GitHub repository
-   - Configure environment variables
-   - Deploy automatically
-
-2. **See detailed instructions:**
-   - [Deployment Guide](DEPLOYMENT.md)
-   - [Service Setup](SETUP_SERVICES.md)
-
-## 📚 Documentation
-
-- 🚀 [Deployment Guide](DEPLOYMENT.md) - Complete deployment instructions
-- 🔧 [Service Setup](SETUP_SERVICES.md) - External services configuration
-- 🧪 [Testing Guide](TESTING.md) - Unit and E2E testing
-- ☁️ [S3 Setup](S3_SETUP.md) - File storage configuration
-- 🛡️ [Reports & Blocks](REPORTS_AND_BLOCKS.md) - User safety features
-- ⚙️ [Account Settings](ACCOUNT_SETTINGS.md) - User data management
-
-## 🛠️ Available Scripts
-
-### Development
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run setup:env` - Setup environment variables
-
-### Code Quality
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint errors
-- `npm run format` - Format code with Prettier
-- `npm run type-check` - TypeScript type checking
-
-### Testing
-- `npm run test` - Run unit tests (watch mode)
-- `npm run test:run` - Run unit tests once
-- `npm run test:coverage` - Run tests with coverage
-- `npm run test:e2e` - Run E2E tests
-- `npm run test:e2e:ui` - Run E2E tests with UI
-
-### Database
-- `npm run prisma:generate` - Generate Prisma client
-- `npm run prisma:migrate` - Run database migrations
-- `npm run prisma:studio` - Open Prisma Studio
-- `npm run prisma:reset` - Reset database
-- `npm run prisma:deploy` - Deploy migrations to production
-
-## 🌐 Live Demo
-
-- **Production**: [your-app.vercel.app](https://your-app.vercel.app)
-- **Staging**: [your-app-git-develop.vercel.app](https://your-app-git-develop.vercel.app)
-
-## 🏗️ Architecture
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Next.js App   │    │   PostgreSQL    │    │  Cloudflare R2  │
-│                 │    │                 │    │                 │
-│ • App Router    │◄──►│ • User data     │    │ • Photo storage │
-│ • API Routes    │    │ • Matches       │    │ • CDN delivery  │
-│ • Real-time     │    │ • Messages      │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │
-         ▼
-┌─────────────────┐    ┌─────────────────┐
-│   NextAuth      │    │   Socket.IO     │
-│                 │    │                 │
-│ • Google OAuth  │    │ • Real-time     │
-│ • JWT sessions  │    │ • Chat messages │
-│ • Middleware    │    │ • Notifications │
-└─────────────────┘    └─────────────────┘
+```bash
+npm install
 ```
 
-## 🔒 Security Features
+### 2. Настройка переменных окружения
 
-- ✅ **Rate limiting** on all POST endpoints
-- ✅ **Input validation** with Zod schemas
-- ✅ **SQL injection protection** with Prisma
-- ✅ **XSS protection** with Next.js
-- ✅ **CSRF protection** with NextAuth
-- ✅ **File upload validation** (type, size, count)
-- ✅ **User reporting and blocking**
-- ✅ **Admin moderation tools**
+Создайте файл `.env.local`:
 
-## 📊 Monitoring
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/lovees"
 
-- **Error tracking**: Sentry integration
-- **Analytics**: PostHog (optional)
-- **Performance**: Vercel Analytics
-- **Uptime**: Vercel monitoring
-- **Online users**: Real-time metrics
+# NextAuth
+NEXTAUTH_SECRET="your-secret-key-here"
+NEXTAUTH_URL="http://localhost:3000"
 
-## 🤝 Contributing
+# Google OAuth (опционально)
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+# Pusher (для реалтайм чата)
+PUSHER_APP_ID="your-pusher-app-id"
+PUSHER_KEY="your-pusher-key"
+PUSHER_SECRET="your-pusher-secret"
+PUSHER_CLUSTER="your-pusher-cluster"
+NEXT_PUBLIC_PUSHER_KEY="your-pusher-key"
+NEXT_PUBLIC_PUSHER_CLUSTER="your-pusher-cluster"
 
-## 📄 License
+# UploadThing (для загрузки фото)
+UPLOADTHING_SECRET="your-uploadthing-secret"
+UPLOADTHING_APP_ID="your-uploadthing-app-id"
+S3_PUBLIC_URL="https://your-cdn-domain.com"
+```
 
-This project is licensed under the MIT License.
+### 3. Настройка базы данных
+
+```bash
+# Генерация Prisma клиента
+npx prisma generate
+
+# Применение миграций
+npx prisma migrate dev
+
+# (Опционально) Заполнение тестовыми данными
+npx prisma db seed
+```
+
+### 4. Запуск приложения
+
+```bash
+# Режим разработки
+npm run dev
+
+# Сборка для продакшена
+npm run build
+npm start
+```
+
+## 🔐 Аутентификация
+
+### Регистрация тестового пользователя
+
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "password": "password123",
+    "name": "Test User"
+  }'
+```
+
+### Вход в систему
+
+Откройте в браузере: `http://localhost:3000/api/auth/signin?callbackUrl=%2F`
+
+Или используйте стандартную страницу NextAuth: `http://localhost:3000/api/auth/signin`
+
+## 📱 Основные функции
+
+- ✅ **Аутентификация**: Credentials + Google OAuth
+- ✅ **Профили пользователей**: Фото, интересы, геолокация
+- ✅ **Поиск и свайпы**: Алгоритм подбора по предпочтениям
+- ✅ **Реалтайм чат**: Pusher для мгновенных сообщений
+- ✅ **Мэтчи**: Взаимные лайки создают мэтчи
+- ✅ **Безопасность**: Rate limiting, репорты, блокировки
+- ✅ **Темная тема**: Переключение светлой/темной темы
+
+## 🛠 Технологии
+
+- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, Prisma ORM
+- **База данных**: PostgreSQL
+- **Аутентификация**: NextAuth.js
+- **Реалтайм**: Pusher
+- **Файлы**: UploadThing
+- **UI**: shadcn/ui, Framer Motion
+
+## 📁 Структура проекта
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── api/               # API роуты
+│   │   ├── auth/          # NextAuth
+│   │   ├── browse/        # Поиск кандидатов
+│   │   ├── swipe/         # Свайпы
+│   │   ├── matches/       # Мэтчи
+│   │   ├── messages/      # Сообщения
+│   │   └── ...
+│   ├── browse/            # Страница поиска
+│   ├── matches/           # Список мэтчей
+│   ├── chat/              # Чат
+│   └── settings/          # Настройки
+├── components/            # React компоненты
+│   ├── ui/               # UI примитивы
+│   └── ...
+├── lib/                  # Утилиты и конфигурация
+│   ├── auth.ts           # NextAuth конфиг
+│   ├── prisma.ts         # Prisma клиент
+│   ├── pusher.ts         # Pusher сервер
+│   └── ...
+└── prisma/               # Схема базы данных
+    └── schema.prisma
+```
+
+## 🔧 Команды разработки
+
+```bash
+# Разработка
+npm run dev
+
+# Сборка
+npm run build
+
+# Линтинг
+npm run lint
+npm run lint:fix
+
+# Форматирование
+npm run format
+
+# Тесты
+npm run test
+npm run test:ui
+
+# E2E тесты
+npm run test:e2e
+```
+
+## 📊 API Endpoints
+
+### Аутентификация
+- `POST /api/auth/register` - Регистрация
+- `GET /api/auth/signin` - Вход
+- `GET /api/auth/signout` - Выход
+
+### Пользователи
+- `GET /api/me` - Профиль пользователя
+- `PATCH /api/me` - Обновление профиля
+- `POST /api/me/photos` - Загрузка фото
+
+### Поиск и свайпы
+- `GET /api/browse` - Кандидаты для свайпа
+- `POST /api/swipe` - Свайп (LEFT/RIGHT/SUPER)
+- `GET /api/matches` - Список мэтчей
+
+### Сообщения
+- `GET /api/messages?matchId=...` - История сообщений
+- `POST /api/messages` - Отправка сообщения
+- `POST /api/messages/read` - Отметка как прочитанные
+
+### Безопасность
+- `POST /api/report` - Жалоба на пользователя
+- `POST /api/block` - Блокировка пользователя
+- `DELETE /api/block` - Разблокировка
+
+## 🚀 Деплой
+
+### Vercel
+
+1. Подключите репозиторий к Vercel
+2. Настройте переменные окружения в Vercel Dashboard
+3. Деплой автоматически запустится
+
+### База данных
+
+Рекомендуется использовать:
+- **Neon** (PostgreSQL)
+- **PlanetScale** (MySQL)
+- **Supabase** (PostgreSQL)
+
+### Файлы
+
+Для загрузки фото используйте:
+- **UploadThing**
+- **Cloudflare R2**
+- **AWS S3**
+
+## 📝 Лицензия
+
+MIT License
+
+## 🤝 Поддержка
+
+По вопросам и предложениям создавайте Issues в репозитории.

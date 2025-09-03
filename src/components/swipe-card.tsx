@@ -1,228 +1,159 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { motion, PanInfo } from "framer-motion"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Heart, X, Star, MapPin, Calendar } from "lucide-react"
+import Image from "next/image"
+import { Flag, UserX } from "lucide-react"
+import { toast } from "sonner"
 
-interface Candidate {
+interface User {
   id: string
   name: string
   age: number
   city: string
-  primaryPhotoUrl: string | null
   interests: string[]
-  distanceKm: number
+  photoUrl: string
 }
 
 interface SwipeCardProps {
-  candidate: Candidate
+  user: User
   onSwipe: (direction: "LEFT" | "RIGHT" | "SUPER") => void
-  onMatch?: (candidate: Candidate) => void
+  onReport?: (userId: string) => void
+  onBlock?: (userId: string) => void
 }
 
-export function SwipeCard({ candidate, onSwipe, onMatch }: SwipeCardProps) {
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 })
-  const cardRef = useRef<HTMLDivElement>(null)
+export function SwipeCard({ user, onSwipe, onReport, onBlock }: SwipeCardProps) {
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    const threshold = 120
+    const velocity = info.velocity.x
 
-  const handleStart = (clientX: number, clientY: number) => {
-    setIsDragging(true)
-    setStartPos({ x: clientX, y: clientY })
-  }
-
-  const handleMove = (clientX: number, clientY: number) => {
-    if (!isDragging) return
-    
-    const deltaX = clientX - startPos.x
-    const deltaY = clientY - startPos.y
-    
-    setDragOffset({ x: deltaX, y: deltaY })
-  }
-
-  const handleEnd = () => {
-    if (!isDragging) return
-    
-    setIsDragging(false)
-    
-    const threshold = 100
-    const rotation = dragOffset.x * 0.1
-    
-    if (Math.abs(dragOffset.x) > threshold) {
-      if (dragOffset.x > 0) {
-        onSwipe("RIGHT")
-      } else {
-        onSwipe("LEFT")
-      }
-    } else if (dragOffset.y < -threshold) {
-      onSwipe("SUPER")
-    } else {
-      // Reset position
-      setDragOffset({ x: 0, y: 0 })
+    if (info.offset.x > threshold || velocity > 500) {
+      onSwipe("RIGHT")
+    } else if (info.offset.x < -threshold || velocity < -500) {
+      onSwipe("LEFT")
     }
   }
-
-  // Mouse events
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault()
-    handleStart(e.clientX, e.clientY)
-  }
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    handleMove(e.clientX, e.clientY)
-  }
-
-  const handleMouseUp = () => {
-    handleEnd()
-  }
-
-  // Touch events
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0]
-    handleStart(touch.clientX, touch.clientY)
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const touch = e.touches[0]
-    handleMove(touch.clientX, touch.clientY)
-  }
-
-  const handleTouchEnd = () => {
-    handleEnd()
-  }
-
-  // Keyboard events
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        onSwipe("LEFT")
-      } else if (e.key === "ArrowRight") {
-        onSwipe("RIGHT")
-      } else if (e.key === "ArrowUp") {
-        onSwipe("SUPER")
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [onSwipe])
-
-  const rotation = dragOffset.x * 0.1
-  const opacity = Math.max(0.3, 1 - Math.abs(dragOffset.x) / 200)
 
   return (
-    <div
-      ref={cardRef}
-      className="relative w-full max-w-sm mx-auto bg-card rounded-2xl shadow-lg overflow-hidden cursor-grab active:cursor-grabbing select-none"
-      style={{
-        transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${rotation}deg)`,
-        opacity,
-        transition: isDragging ? "none" : "all 0.3s ease-out",
+    <motion.div
+      className="relative w-full max-w-sm mx-auto bg-background rounded-2xl shadow-card overflow-hidden"
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.2}
+      onDragEnd={handleDragEnd}
+      whileDrag={{ 
+        rotate: 0,
+        scale: 0.95,
+        transition: { duration: 0.1 }
       }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+      initial={{ scale: 1, rotate: 0 }}
+      animate={{ scale: 1, rotate: 0 }}
+      exit={{ 
+        x: 300, 
+        opacity: 0, 
+        scale: 0.8,
+        transition: { duration: 0.3 }
+      }}
     >
       {/* Photo */}
-      <div className="relative h-96 bg-muted">
-        {candidate.primaryPhotoUrl ? (
-          <img
-            src={candidate.primaryPhotoUrl}
-            alt={candidate.name}
-            className="w-full h-full object-cover"
-            draggable={false}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="text-6xl">📷</div>
-          </div>
-        )}
-        
-        {/* Swipe indicators */}
-        {Math.abs(dragOffset.x) > 50 && (
-          <div
-            className={`absolute top-8 left-8 p-4 rounded-full text-white font-bold text-2xl ${
-              dragOffset.x > 0 ? "bg-green-500" : "bg-red-500"
-            }`}
-          >
-            {dragOffset.x > 0 ? "❤️" : "❌"}
-          </div>
-        )}
-        
-        {dragOffset.y < -50 && (
-          <div className="absolute top-8 right-8 p-4 rounded-full bg-yellow-500 text-white font-bold text-2xl">
-            ⭐
-          </div>
-        )}
+      <div className="relative aspect-[3/4] w-full">
+        <Image
+          src={user.photoUrl}
+          alt={`${user.name} photo`}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 400px"
+        />
       </div>
 
-      {/* Info */}
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-2xl font-bold">{candidate.name}</h2>
-          <span className="text-xl text-muted-foreground">{candidate.age}</span>
-        </div>
-        
-        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-          <div className="flex items-center gap-1">
-            <MapPin className="w-4 h-4" />
-            {candidate.city}
-          </div>
-          <div className="flex items-center gap-1">
-            <span>{candidate.distanceKm} км</span>
-          </div>
+      {/* Content */}
+      <div className="p-6 space-y-4">
+        {/* Name and Age */}
+        <div className="flex items-center gap-2">
+          <h3 className="text-2xl font-bold text-foreground">
+            {user.name}
+          </h3>
+          <span className="text-xl text-muted-foreground">
+            {user.age}
+          </span>
         </div>
 
+        {/* City */}
+        <p className="text-muted-foreground flex items-center gap-2">
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+          {user.city}
+        </p>
+
         {/* Interests */}
-        {candidate.interests.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {candidate.interests.slice(0, 5).map((interest) => (
-              <span
-                key={interest}
-                className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-              >
-                {interest}
-              </span>
-            ))}
-            {candidate.interests.length > 5 && (
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm">
-                +{candidate.interests.length - 5}
-              </span>
-            )}
-          </div>
-        )}
+        <div className="flex flex-wrap gap-2">
+          {user.interests.map((interest, index) => (
+            <Badge key={index} variant="secondary">
+              {interest}
+            </Badge>
+          ))}
+        </div>
       </div>
 
       {/* Action buttons */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-4">
-        <Button
-          size="sm"
-          variant="destructive"
-          className="rounded-full w-12 h-12"
-          onClick={() => onSwipe("LEFT")}
-        >
-          <X className="w-6 h-6" />
-        </Button>
-        <Button
-          size="sm"
-          variant="secondary"
-          className="rounded-full w-12 h-12"
-          onClick={() => onSwipe("SUPER")}
-        >
-          <Star className="w-6 h-6" />
-        </Button>
-        <Button
-          size="sm"
-          className="rounded-full w-12 h-12 bg-green-500 hover:bg-green-600"
-          onClick={() => onSwipe("RIGHT")}
-        >
-          <Heart className="w-6 h-6" />
-        </Button>
+      <div className="absolute top-4 right-4 flex gap-2">
+        {onReport && (
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={(e) => {
+              e.stopPropagation()
+              onReport(user.id)
+            }}
+            className="h-8 w-8 p-0"
+          >
+            <Flag className="h-4 w-4" />
+          </Button>
+        )}
+        {onBlock && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation()
+              onBlock(user.id)
+            }}
+            className="h-8 w-8 p-0"
+          >
+            <UserX className="h-4 w-4" />
+          </Button>
+        )}
       </div>
-    </div>
+
+      {/* Swipe indicators */}
+      <div className="absolute top-4 left-4 opacity-0 pointer-events-none">
+        <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+          NOPE
+        </div>
+      </div>
+      <div className="absolute top-4 right-4 opacity-0 pointer-events-none">
+        <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+          LIKE
+        </div>
+      </div>
+    </motion.div>
   )
 }

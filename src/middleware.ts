@@ -1,13 +1,19 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
 
-export function middleware(request: any) {
-  // Простой middleware без аутентификации
-  return NextResponse.next()
+export function middleware(request: Request) {
+  // Simple middleware - just pass through for now
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    // Исключаем статические файлы и API routes
-    "/((?!_next/static|_next/image|favicon.ico|api/ok).*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api/auth (NextAuth API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
   ],
-}
+};

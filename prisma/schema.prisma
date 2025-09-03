@@ -83,8 +83,8 @@ model User {
   gender       Gender
   bio          String?   @db.Text
   city         String
-  lat          Decimal   @db.Decimal(9, 6)
-  lng          Decimal   @db.Decimal(9, 6)
+  latitude     Decimal?  @db.Decimal(9, 6)
+  longitude    Decimal?  @db.Decimal(9, 6)
   interests    String[]  // PostgreSQL text array
   isBanned     Boolean   @default(false)
   role         UserRole  @default(USER)
@@ -108,7 +108,7 @@ model User {
   blocksGiven     Block[]   @relation("BlockerUser")
   blocksReceived  Block[]   @relation("BlockedUser")
 
-  @@index([lat, lng])
+  @@index([latitude, longitude])
   @@index([isBanned])
   @@index([createdAt])
   @@index([role])
