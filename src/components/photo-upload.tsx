@@ -5,7 +5,42 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Upload, X, Star, Loader2 } from "lucide-react"
 import { useDropzone } from "react-dropzone"
-import { validateImageFile, processImage, formatFileSize, MAX_PHOTOS_PER_USER } from "@/lib/image-utils"
+// TODO: Replace with client-side image validation or API calls
+// import { validateImageFile, processImage, formatFileSize, MAX_PHOTOS_PER_USER } from "@/lib/image-utils"
+
+// Temporary client-side implementations
+const MAX_PHOTOS_PER_USER = 6
+
+const validateImageFile = (file: File) => {
+  const validTypes = ['image/jpeg', 'image/png', 'image/webp']
+  const maxSize = 5 * 1024 * 1024 // 5MB
+  
+  if (!validTypes.includes(file.type)) {
+    return { isValid: false, error: 'Неподдерживаемый формат файла' }
+  }
+  
+  if (file.size > maxSize) {
+    return { isValid: false, error: 'Файл слишком большой (максимум 5MB)' }
+  }
+  
+  return { isValid: true }
+}
+
+const processImage = async (file: File) => {
+  // TODO: Implement client-side image processing or use API
+  return {
+    thumbnail: file,
+    original: file
+  }
+}
+
+const formatFileSize = (bytes: number) => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
 
 interface PhotoUploadProps {
   photos: Array<{ id: string; url: string; isPrimary: boolean }>
