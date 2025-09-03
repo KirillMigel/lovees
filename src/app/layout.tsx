@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { getSiteURL } from "@/lib/env";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,6 +12,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Lovees App",
   description: "A modern Next.js application with TypeScript, Tailwind, and more",
+  metadataBase: getSiteURL(),
 };
 
 export default function RootLayout({
