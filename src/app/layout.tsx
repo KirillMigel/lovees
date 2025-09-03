@@ -12,7 +12,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Lovees App",
   description: "A modern Next.js application with TypeScript, Tailwind, and more",
-  // metadataBase: getSiteURL(), // Temporarily disabled to fix build
+  metadataBase: getSiteURL(),
 };
 
 export default function RootLayout({
