@@ -8,12 +8,9 @@ export function middleware(request: Request) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api/auth (NextAuth API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Временно отключаем middleware полностью
+     * Match only non-existent paths to disable middleware
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
+    "/non-existent-path-for-middleware-disabling",
   ],
 };

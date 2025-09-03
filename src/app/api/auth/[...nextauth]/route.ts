@@ -10,7 +10,7 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // Простая заглушка для тестирования
+        // Простая заглушка для тестирования (updated)
         if (credentials?.email === "test@example.com" && credentials?.password === "password123") {
           return {
             id: "1",
