@@ -2,6 +2,7 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 const handler = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-testing",
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -10,7 +11,7 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // Простая заглушка для тестирования (updated)
+        // Простая заглушка для тестирования
         if (credentials?.email === "test@example.com" && credentials?.password === "password123") {
           return {
             id: "1",
