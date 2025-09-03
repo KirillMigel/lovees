@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request: Request) {
-  // Simple middleware - just pass through for now (updated)
+  // Временно отключаем всю логику middleware для отладки
   return NextResponse.next();
 }
 
